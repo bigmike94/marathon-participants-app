@@ -1,0 +1,25 @@
+.edit-inp, .gender {
+	border: none;
+	outline: none;
+}
+
+.edit-inp:disabled, .gender:disabled {
+  background-color: transparent;
+}
+
+.edit-inp:focus {
+	border-bottom: 1px solid black;
+}
+
+.edit-icons {
+	font-size: 20px;
+}
+
+#no-data-msg{
+	color: red;
+	text-align: center;
+	font-weight: 900;
+}
+.warn-border {
+	border-bottom: 1px solid red;
+}
