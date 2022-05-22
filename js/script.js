@@ -139,9 +139,17 @@ const createHTML = (item, index) => {
         </td>
     `;
     row.innerHTML = html;
+
+    const modeButton = row.querySelector(".edit_save");
     row.querySelector(".delete-button").addEventListener("click", () => deleteParticipant(id));
-    row.querySelector(".edit_save").addEventListener("click", () => activateEdit(id, item));
-    row.querySelector(".undo").addEventListener("click", () => undo(id, item));
+    modeButton.addEventListener("click", () => activateEdit(id, item));
+    row.querySelector(".undo").addEventListener("click", () => {
+        const actionButton = row.querySelector(".edit_save");
+        if (actionButton.getAttribute("data-mode") === "save") {
+            setDataMode(row, modeButton, "edit");
+            undo(id, item);
+        }
+    });
     return row;
 }
 
@@ -168,7 +176,6 @@ register_form.addEventListener("submit", (e) => {
     const formData = new FormData(e.target);
     const objToSend = {};
     for(const pair of formData.entries()) {
-        console.log(pair[0]);
         objToSend[pair[0]] = pair[1];
     }
     addParticipant(objToSend);
