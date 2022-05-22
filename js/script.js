@@ -93,15 +93,11 @@ const activateEdit = (id, defaultData) => {
     }
 }
 
-const undo = (id, defaultData) => {
+const undo = (id) => {
     const participant = document.querySelector(`#participant-${id}`);
-    const inputs = participant.querySelectorAll(".edit-inp");
-    let [nameElement, birth_year_element, gender_element] = inputs;
-    const {name, birth_year, gender} = defaultData;
-    nameElement.value = name;
-    birth_year_element.value = birth_year;
-    gender_element.value = gender;
-    inputs.forEach(input => input.disabled = true);
+    const changedButton = participant.querySelector(".edit_save");
+    setDataMode(participant, changedButton, "edit");
+    getParticipants();
 }
 
 const createHTML = (item, index) => {
