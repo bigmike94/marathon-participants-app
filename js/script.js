@@ -20,6 +20,12 @@ const setDataMode = (parentRef, refButton, dataMode) => {
     }
 }
 
+const getParticipant = async(id) => {
+    let participant = await fetch(`${apiBase}/${id}`);
+    participant = await participant.json();
+    return participant;
+}
+
 const deleteParticipant = async (id) => {
     const deletePromise = await fetch(`${apiBase}/${id}`, {
         method: 'DELETE',
@@ -93,11 +99,15 @@ const activateEdit = (id, defaultData) => {
     }
 }
 
-const undo = (id) => {
+const undo = async (id) => {
     const participant = document.querySelector(`#participant-${id}`);
     const changedButton = participant.querySelector(".edit_save");
     setDataMode(participant, changedButton, "edit");
-    getParticipants();
+    const {name, birth_year, gender} = await getParticipant(id);
+    const [name_el, birth_year_el, gender_el] = participant.querySelectorAll(".edit-inp");
+    name_el.value = name;
+    birth_year_el.value = birth_year;
+    gender_el.value = gender;
 }
 
 const createHTML = (item, index) => {
