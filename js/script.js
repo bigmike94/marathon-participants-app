@@ -6,7 +6,9 @@ const editIcon = '<i class="fa fa-edit edit-icons"></i>';
 const saveIcon = '<i class="fa fa-save edit-icons"></i>';
 
 const setDataMode = (parentRef, refButton, dataMode) => {
+
     const inputs = parentRef.querySelectorAll(".edit-inp");
+
     if (dataMode === "edit") {
         refButton.setAttribute("data-mode", "edit");
         refButton.innerHTML = editIcon;
@@ -58,7 +60,7 @@ const updateParticipant = async (id, data) => {
     return updatedPromise.ok;
 }
 
-const activateEdit = (id, defaultData) => {
+const activateEdit = async (id, defaultData) => {
     const participant = document.querySelector(`#participant-${id}`);
     const clickedButton = participant.querySelector(".edit_save");
 
@@ -87,11 +89,14 @@ const activateEdit = (id, defaultData) => {
                 }
                 else {
                     const updateObj = {
-                        name: name.value, 
+                         name: name.value, 
                         birth_year: birth_year.value, 
                         gender: gender.value
                     };
-                    updateParticipant(id, updateObj);
+                    const updated = await updateParticipant(id, updateObj);
+                    if (updated) {
+                        getParticipants();
+                    }
                 }
                 setDataMode(participant, clickedButton, "edit");
             }
@@ -99,12 +104,10 @@ const activateEdit = (id, defaultData) => {
     }
 }
 
-const undo = async (id) => {
+const undo = async (id, item) => {
     const participant = document.querySelector(`#participant-${id}`);
-    const changedButton = participant.querySelector(".edit_save");
-    setDataMode(participant, changedButton, "edit");
-    const {name, birth_year, gender} = await getParticipant(id);
     const [name_el, birth_year_el, gender_el] = participant.querySelectorAll(".edit-inp");
+    const {name, birth_year, gender} = item;
     name_el.value = name;
     birth_year_el.value = birth_year;
     gender_el.value = gender;
@@ -150,11 +153,8 @@ const createHTML = (item, index) => {
     row.querySelector(".delete-button").addEventListener("click", () => deleteParticipant(id));
     modeButton.addEventListener("click", () => activateEdit(id, item));
     row.querySelector(".undo").addEventListener("click", () => {
-        const actionButton = row.querySelector(".edit_save");
-        if (actionButton.getAttribute("data-mode") === "save") {
-            setDataMode(row, modeButton, "edit");
-            undo(id, item);
-        }
+        const dataMode = modeButton.getAttribute("data-mode");
+        if (dataMode === "save") undo(id, item)
     });
     return row;
 }
